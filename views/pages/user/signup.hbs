@@ -1,0 +1,48 @@
+<div class="container">
+    <form action="/user/signup" method="POST">
+        ` <h2 class="blue-text darken-3">Sign up form</h2>
+        <div class="row">
+
+            <div class="col s12 input-field">
+                <input
+                value='{{values.username}}' 
+                type="text" name="username"}>
+                <label for="">Name</label>
+                {{#if error.username}}
+                <p class="red-text err">{{error.username}}</p>
+                {{/if}}
+            </div>
+            <div class="col s12 input-field">
+                <input
+                value='{{values.email}}' 
+                type="email" name="email">
+                <label for="">Email</label>
+                {{#if error.email}}
+                <p class="red-text err">{{error.email}}</p>
+                {{/if}}
+            </div>
+            <div class="col s12 l6 input-field">
+                <input
+                value='{{values.password}}' 
+                type="text" name="password">
+                <label for="">Password</label>
+                {{#if error.password}}
+                <p class="red-text err">{{error.password}}</p>
+                {{/if}}
+            </div>
+            <div class="col s12 l6 input-field">
+                <input 
+                type="text" name="confirmPassword" >
+                <label for=""> Confirm Password</label>
+                {{#if error.password}}
+                <p class="red-text err">{{error.password}}</p>
+                {{/if}}
+            </div>
+            <div class="input-field col s6 l6 center">
+                <button class="btn center">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
