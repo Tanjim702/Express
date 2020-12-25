@@ -31,12 +31,10 @@
                 {{/if}}
             </div>
             <div class="col s12 l6 input-field">
-                <input 
+                <input value={{values.password}}
                 type="text" name="confirmPassword" >
                 <label for=""> Confirm Password</label>
-                {{#if error.password}}
-                <p class="red-text err">{{error.password}}</p>
-                {{/if}}
+
             </div>
             <div class="input-field col s6 l6 center">
                 <button class="btn center">

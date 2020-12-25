@@ -1,4 +1,7 @@
 <div class="container">
+    {{#if isLoggedIn}}
+    <p>User is logged in</p>
+    {{/if}}
     <form action="/user/login" method="POST">
         ` <h2 class="blue-text darken-3">Login form</h2>
         <div class="row">
