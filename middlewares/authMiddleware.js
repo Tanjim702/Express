@@ -2,7 +2,6 @@ const User = require('../models/User')
 exports.bindUserWithRequest = ()=>{
     return async (req,res,next)=>{
         if(!req.session.isLoggedIn){
-            console.log('From auth moddleware', req.session.user)
             return next()
         }
         try {
