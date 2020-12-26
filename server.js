@@ -6,6 +6,7 @@ const app = express()
 const exphbs = require('express-handlebars')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
+const flash = require('connect-flash')
 //Session store
 const store = new MongoDBStore({
     uri: process.env.DB_URI,
@@ -21,6 +22,7 @@ app.set('view engine', '.hbs');
 // Import Middlewares
 const setLocals = require('./middlewares/setLocals')
 const { bindUserWithRequest } = require('./middlewares/authMiddleware')
+const multer = require('multer')
 //Middlewares
 app.use(session({
     secret: process.env.SECRET_KEY || 'SECRET_KEY',
@@ -36,7 +38,10 @@ if (app.get('env').toLowerCase() === 'development') {
 }
 app.use(express.urlencoded({ extended: true }))//Like body parser
 app.use(bindUserWithRequest())
+//Set locals can be accessed directly in the template engine
 app.use(setLocals())
+//Flash
+app.use(flash())
 //Public directory
 app.use(express.static('public'))
 
@@ -47,9 +52,11 @@ const PORT = process.env.PORT
 app.use('/user', require('./routes/userRoutes'))
 app.use('/dashboard', require('./routes/dashboardRoute'))
 app.get('/', (req, res) => {
-
+    console.log(req.session)
     res.render('home', {
         title: 'Blog_Post app',
+        //Data must be removed.Just to check user
+        data:req.session.user 
     })
 })
 //Routes

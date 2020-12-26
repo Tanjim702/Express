@@ -5,7 +5,8 @@ const User = require('../models/User')
 
 
 //Utils
-const {isUnauthenticated} = require('../middlewares/authMiddleware')
+const Flash = require('../utils/Flash')
+const { isUnauthenticated } = require('../middlewares/authMiddleware')
 const { validationResult, body } = require('express-validator')
 const bcrypt = require('bcrypt')
 //utils
@@ -24,18 +25,19 @@ const {
     logout
 } = require('../controllers/userController')
 //@SignupGet
-router.get('/signup',isUnauthenticated ,(req, res, next) => {
+router.get('/signup', isUnauthenticated, (req, res, next) => {
     //Starts
     res.render('pages/user/signup', {
         title: 'Create a new account',
         error: {},
-        values: {}
+        values: {},
+        flashMessage: Flash.getMessage(req)
     })
 
     //Ends
 })
 //@signupPost
-router.post('/signup', isUnauthenticated,signupValidator, async (req, res) => {
+router.post('/signup', isUnauthenticated, signupValidator, async (req, res) => {
     //Starts
     let { username, email, password } = req.body
     // console.log(password)
@@ -51,12 +53,16 @@ router.post('/signup', isUnauthenticated,signupValidator, async (req, res) => {
     //     })
     // }
     try {
+
         let hashedPassword = await bcrypt.hash(password, 11)
         let user = await new User({ username, email, password: hashedPassword })
         await user.save()
+        req.flash('success','User created successfully')
         console.log(`User created successfully`)
         res.render('home', {
             title: 'Signup successfull',
+            flashMessage: Flash.getMessage(req)
+
 
         })
     } catch (error) {
@@ -65,14 +71,16 @@ router.post('/signup', isUnauthenticated,signupValidator, async (req, res) => {
     //Ends
 })
 //@loginGet
-router.get('/login', isUnauthenticated,(req, res, next) => {
+router.get('/login', isUnauthenticated, (req, res, next) => {
     //Starts
     console.log(req.session.user)
-    res.render('pages/user/login', { title: 'Login page'})
+    res.render('pages/user/login', {
+        title: 'Login page', flashMessage: Flash.getMessage(req)
+    })
     //Ends
 })
 //@loginPost
-router.post('/login',isUnauthenticated,loginValidator, async (req, res, next) => {
+router.post('/login', isUnauthenticated, loginValidator, async (req, res, next) => {
     //Starts
     let { email, password } = req.body
     let errors = validationResult(req).formatWith((err) => err.msg)
@@ -82,7 +90,9 @@ router.post('/login',isUnauthenticated,loginValidator, async (req, res, next) =>
         return res.render('pages/user/login', {
             title: 'Try again',
             error: errors.mapped(),
-            values: { email, password }
+            values: { email, password },
+            flashMessage: Flash.getMessage(req)
+
 
         })
     }
@@ -97,14 +107,14 @@ router.post('/login',isUnauthenticated,loginValidator, async (req, res, next) =>
         }
         req.session.isLoggedIn = true;
         req.session.user = user
-        req.session.save(err=>{
-            if(err){
+        req.session.save(err => {
+            if (err) {
                 console.log(err)
                 return next(err)
             }
-             return res.redirect('/dashboard')
+            return res.redirect('/dashboard/create-profile')
         })
-    
+
     } catch (error) {
         console.log(error)
     }
@@ -113,8 +123,8 @@ router.post('/login',isUnauthenticated,loginValidator, async (req, res, next) =>
 //@logout
 router.get('/logout', (req, res, next) => {
     //Starts
-    req.session.destroy(err=>{
-        if(err){
+    req.session.destroy(err => {
+        if (err) {
             console.log(err);
             return next()
         }

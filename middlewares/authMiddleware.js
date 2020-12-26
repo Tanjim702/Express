@@ -8,10 +8,10 @@ exports.bindUserWithRequest = ()=>{
         try {
             let user =await User.findById(req.session.user._id)
             req.user = user
-            next()
+            return next()
         } catch (error) {
             console.log(error)
-            next(error)
+            return next(error)
         }
 
     }
@@ -20,7 +20,7 @@ exports.isAuthenticated = (req,res,next)=>{
     if(!req.session.isLoggedIn){
         return res.redirect('/user/login')
     }
-    next()
+    return next()
 }
 exports.isUnauthenticated = (req,res,next)=>{
     if(req.session.isLoggedIn){
